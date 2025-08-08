@@ -1,8 +1,8 @@
-# SPR-SUCBRV
+# SPR-PARCELA 2 PP CANTARRANA
 
 **Repositorio del Dashboard del Proyecto de Subdivisión - Parcela 2, Subdivisión Cantarrana**
 
-Este repositorio contiene el seguimiento, documentación y resultados del proyecto de subdivisión predial correspondiente a la Parcela N°2 del loteo Cantarrana, desarrollado por la sucesión de José Humberto Bravo.
+Este repositorio contiene el seguimiento, documentación y resultados del proyecto de subdivisión predial correspondiente a la Parcela N°2 del Loteo Cantarrana, desarrollado por la sucesión de HKL82663
 
 ## Descripción del Proyecto
 
