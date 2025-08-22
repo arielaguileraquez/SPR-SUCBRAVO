@@ -19,7 +19,7 @@
         }).addTo(map);
 
         // Cargar GeoJSON desde el mismo repositorio
-        fetch('lo1.json') // Asegúrate que tu archivo se llame exactamente lo1.json
+        fetch('12.json') // Asegúrate que tu archivo se llame exactamente lo1.json
             .then(response => response.json())
             .then(geojsonData => {
                 var geojsonLayer = L.geoJSON(geojsonData, {
