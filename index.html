@@ -1,34 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>SPR-SUCBRAVO2024</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <style>#map { height: 600px; width: 100%; }</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Progreso del Loteo con PDF Viewer</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  body { background: #f8f9fa; }
+  .task-card {
+    transition: all 0.2s ease;
+    cursor: pointer;
+    margin-bottom: 10px;
+    border-radius: 12px;
+  }
+  .task-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  }
+  .icon-anim { transition: transform 0.3s ease; }
+  .task-card:active .icon-anim { transform: scale(1.1); }
+  .sub-card { margin-left: 20px; border-left: 3px solid #dee2e6; padding-left: 10px; }
+  #pdf-viewer { border: 1px solid #ccc; margin-top: 20px; height: 600px; overflow: auto; }
+</style>
 </head>
 <body>
-    <h1>CARPETA SPR - PARCELA NUMERO 2 PP CANTARRANA</h1>
-    <div id="map"></div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-        var map = L.map('map').setView([-37.505, -72.38], 13);
+<div class="container py-4">
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
+  <h3 class="mb-4 text-center fw-bold text-primary">Progreso del Loteo</h3>
 
-        // Cargar GeoJSON desde el mismo repositorio
-        fetch('12.json') // Asegúrate que tu archivo se llame exactamente lo1.json
-            .then(response => response.json())
-            .then(geojsonData => {
-                var geojsonLayer = L.geoJSON(geojsonData, {
-                    style: { color: 'blue', weight: 2, fillOpacity: 0.3 }
-                }).addTo(map);
-                map.fitBounds(geojsonLayer.getBounds());
-            })
-            .catch(err => console.error("Error cargando GeoJSON:", err));
-    </script>
+  <!-- ITEM PRINCIPAL -->
+  <div class="card task-card p-3 d-flex flex-row justify-content-between align-items-center"
+       data-bs-toggle="collapse" data-bs-target="#item1" aria-expanded="false" aria-controls="item1">
+    <span class="fw-semibold"><i class="bi bi-folder-fill text-primary me-2"></i> Documentos Principales</span>
+    <i class="bi bi-folder-check icon-anim fs-4 text-success" data-bs-toggle="tooltip" title="Completado"></i>
+  </div>
+  <div id="item1" class="collapse sub-card">
+    <div class="card task-card p-2 d-flex flex-row justify-content-between align-items-center"
+         data-bs-toggle="collapse" data-bs-target="#subitem1" aria-expanded="false" aria-controls="subitem1">
+      <span><i class="bi bi-file-earmark-text text-info me-2"></i> Plano Georreferenciado</span>
+      <i class="bi bi-hourglass-split icon-anim fs-5 text-warning" data-bs-toggle="tooltip" title="En Proceso"></i>
+    </div>
+    <div id="subitem1" class="collapse sub-card">
+      <div class="card task-card p-2 d-flex flex-row justify-content-between align-items-center"
+           data-bs-toggle="tooltip" title="Mediciones realizadas con RTK">
+        <span><i class="bi bi-geo-alt text-danger me-2"></i> Mediciones RTK</span>
+        <i class="bi bi-check-circle icon-anim fs-5 text-success" data-bs-toggle="tooltip" title="Listo"></i>
+      </div>
+      <div class="card task-card p-2 d-flex flex-row justify-content-between align-items-center"
+           data-bs-toggle="tooltip" title="Firma pendiente del topógrafo">
+        <span><i class="bi bi-pencil-square text-secondary me-2"></i> Firma del Topógrafo</span>
+        <i class="bi bi-x-circle icon-anim fs-5 text-danger" data-bs-toggle="tooltip" title="Pendiente"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- PDF Viewer -->
+  <div id="pdf-viewer"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+<script>
+  // TOOLTIP
+  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+  [...tooltipTriggerList].map(el => new bootstrap.Tooltip(el, {trigger: 'hover focus click'}));
+
+  // PDF.JS
+  const url = "archivo.pdf"; // <-- Reemplaza con tu PDF local o URL
+  const pdfjsLib = window['pdfjs-dist/build/pdf'];
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://mozilla.github.io/pdf.js/build/pdf.worker.js';
+
+  pdfjsLib.getDocument(url).promise.then(pdf => {
+    pdf.getPage(1).then(page => {
+      const scale = 1.2;
+      const viewport = page.getViewport({scale});
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+      const viewer = document.getElementById('pdf-viewer');
+      viewer.innerHTML = '';
+      viewer.appendChild(canvas);
+      page.render({canvasContext: context, viewport: viewport});
+    });
+  }).catch(err => {
+    console.error(err);
+    document.getElementById('pdf-viewer').innerText = 'Error al cargar el PDF';
+  });
+</script>
 </body>
 </html>
