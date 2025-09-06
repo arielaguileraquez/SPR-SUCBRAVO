@@ -111,5 +111,34 @@
     }
   });
 </script>
+
+<div id="pdf-viewer" style="width:100%; height:80vh; overflow:auto; border:1px solid #ccc;"></div>
+
+<script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+<script>
+  const url = 'pdf/Solicitud_Anterior.pdf'; // tu PDF
+  const pdfjsLib = window['pdfjs-dist/build/pdf'];
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://mozilla.github.io/pdf.js/build/pdf.worker.js';
+
+  pdfjsLib.getDocument(url).promise.then(pdf => {
+    const viewer = document.getElementById('pdf-viewer');
+    viewer.innerHTML = '';
+    for(let i = 1; i <= pdf.numPages; i++) {
+      pdf.getPage(i).then(page => {
+        const scale = 1.2;
+        const viewport = page.getViewport({scale});
+        const canvas = document.createElement('canvas');
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        canvas.style.width = '100%';   // responsivo
+        canvas.style.height = 'auto';
+        const context = canvas.getContext('2d');
+        page.render({canvasContext: context, viewport: viewport});
+        viewer.appendChild(canvas);
+      });
+    }
+  });
+</script>
+
 </body>
 </html>
