@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Prog</title>
+<title>Progreso del Loteo con PDF Viewer</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 <style>
@@ -16,12 +16,12 @@
   }
   .task-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
   }
   .icon-anim { transition: transform 0.3s ease; }
   .task-card:active .icon-anim { transform: scale(1.1); }
   .sub-card { margin-left: 20px; border-left: 3px solid #dee2e6; padding-left: 10px; }
-  #pdf-viewer { border: 1px solid #ccc; margin-top: 20px; height: 600px; overflow: auto; }
+  #pdf-viewer { border: 1px solid #ccc; margin-top: 20px; height: 600px; overflow: auto; display: flex; justify-content: center; align-items: center; }
 </style>
 </head>
 <body>
@@ -37,12 +37,14 @@
     <i class="bi bi-folder-check icon-anim fs-4 text-success" data-bs-toggle="tooltip" title="Completado"></i>
   </div>
   <div id="item1" class="collapse sub-card">
+    <!-- SUBITEM -->
     <div class="card task-card p-2 d-flex flex-row justify-content-between align-items-center"
          data-bs-toggle="collapse" data-bs-target="#subitem1" aria-expanded="false" aria-controls="subitem1">
       <span><i class="bi bi-file-earmark-text text-info me-2"></i> Plano Georreferenciado</span>
       <i class="bi bi-hourglass-split icon-anim fs-5 text-warning" data-bs-toggle="tooltip" title="En Proceso"></i>
     </div>
     <div id="subitem1" class="collapse sub-card">
+      <!-- BITEM -->
       <div class="card task-card p-2 d-flex flex-row justify-content-between align-items-center"
            data-bs-toggle="tooltip" title="Mediciones realizadas con RTK">
         <span><i class="bi bi-geo-alt text-danger me-2"></i> Mediciones RTK</span>
@@ -56,23 +58,37 @@
     </div>
   </div>
 
+  <!-- OTRO ITEM -->
+  <div class="card task-card p-3 d-flex flex-row justify-content-between align-items-center"
+       data-bs-toggle="collapse" data-bs-target="#item2" aria-expanded="false" aria-controls="item2">
+    <span class="fw-semibold"><i class="bi bi-people-fill text-warning me-2"></i> Firma y Aprobaciones</span>
+    <i class="bi bi-pen icon-anim fs-4 text-primary" data-bs-toggle="tooltip" title="Revisión"></i>
+  </div>
+  <div id="item2" class="collapse sub-card">
+    <div class="card task-card p-2 d-flex flex-row justify-content-between align-items-center">
+      <span><i class="bi bi-person-check text-success me-2"></i> Firma del Propietario</span>
+      <i class="bi bi-hourglass-split icon-anim fs-5 text-warning" data-bs-toggle="tooltip" title="En Proceso"></i>
+    </div>
+  </div>
+
   <!-- PDF Viewer -->
-  <div id="pdf-viewer"></div>
+  <div id="pdf-viewer">Cargando PDF...</div>
 
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
 <script>
-  // TOOLTIP
+  // Activar tooltips
   const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
   [...tooltipTriggerList].map(el => new bootstrap.Tooltip(el, {trigger: 'hover focus click'}));
 
-  // PDF.JS
-  const url = "pdf/Solicitud_Anterior.pdf"; // <-- Reemplaza con tu PDF local o URL
+  // PDF.js
+  const url = "pdf/Main_revA-Layout1.pdf"; // <-- Reemplaza aquí con tu PDF
   const pdfjsLib = window['pdfjs-dist/build/pdf'];
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://mozilla.github.io/pdf.js/build/pdf.worker.js';
 
+  // Función para cargar PDF
   pdfjsLib.getDocument(url).promise.then(pdf => {
     pdf.getPage(1).then(page => {
       const scale = 1.2;
@@ -88,7 +104,12 @@
     });
   }).catch(err => {
     console.error(err);
-    document.getElementById('pdf-viewer').innerText = 'Error al cargar el PDF';
+    // Si falla, mostrar botón para abrir PDF en otra pestaña
+    const viewer = document.getElementById('pdf-viewer');
+    viewer.innerHTML = `
+      <p>No se pudo cargar el PDF en el visor. Haz clic abajo para abrirlo:</p>
+      <a href="${url}" target="_blank" class="btn btn-primary">Abrir PDF completo</a>
+    `;
   });
 </script>
 </body>
